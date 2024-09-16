@@ -1,18 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using System.Linq;
+using player.base_class;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class PlayerMain : MonoBehaviour
+namespace player
 {
-    // Start is called before the first frame update
-    void Start()
+    [RequireComponent(typeof(NavMeshAgent))]
+    public class PlayerMain : MonoBehaviour
     {
-        
-    }
+        private NavMeshAgent agent;
+        public NavMeshAgent PlayerAgent => agent;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private void Awake()
+        {
+            agent = GetComponent<NavMeshAgent>();
+            agent.updateRotation = false;
+            agent.updateUpAxis = false;
+
+            GetComponents<PlayerComponentBase>().ToList().ForEach(p => p.PlayerSetup());
+        }
     }
 }

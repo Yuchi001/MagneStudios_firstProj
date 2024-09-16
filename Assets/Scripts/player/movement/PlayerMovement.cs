@@ -1,45 +1,24 @@
+using System;
 using System.Collections.Generic;
+using player.base_class;
 using UnityEngine;
 
 namespace player.movement
 {
-    public partial class PlayerMovement : MonoBehaviour
+    public class PlayerMovement : PlayerComponentBase
     {
-        [SerializeField] private Rigidbody2D rb2d;
-        [SerializeField] private float animationSpeed = 0.5f;
-        [SerializeField] private Animator animator;
-
-        public bool LookingRight => _lookingRight;
-        private bool _lookingRight;
-        
-        private void Awake()
+        private void Update()
         {
-            animator.speed = animationSpeed;
-            _buttonsActive = new Dictionary<KeyCode, bool>
-            {
-                { UpBind, false },
-                { LeftBind, false },
-                { DownBind, false },
-                { RightBind, false },
-            };
+            if(Input.GetMouseButtonDown(0)) ManageClick();
         }
 
-        protected void Update()
+        private void ManageClick()
         {
-            // TODO: Player death movement handling
-            ManageMovement();
-        }
-
-        private void ManageMovement()
-        {
-            var velocity = GetVelocity();
-            rb2d.velocity = velocity;
-            animator.SetBool("isWalking", velocity != Vector2.zero);
-
-            if (velocity.x == 0) return;
-
-            _lookingRight = velocity.x > 0;
-            transform.rotation = Quaternion.Euler(0, _lookingRight ? 180 : 0, 0);
+            var rawMousePosition = Input.mousePosition;
+            var mainCamera = Camera.main;
+            if (!mainCamera) return;
+            var destination = mainCamera.ScreenToWorldPoint(rawMousePosition);
+            PlayerMain.PlayerAgent.SetDestination(destination);
         }
     }
 }
